@@ -31,3 +31,6 @@ testem.log
 #System Files
 .DS_Store
 Thumbs.db
+
+#helps
+main.js

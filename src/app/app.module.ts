@@ -4,9 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
+import { blockchain } from "./shared/services/blockchain";
+import { BlockComponent } from "./shared/components/block/block.component";
 
 @NgModule({
   declarations: [
+    BlockComponent,
     AppComponent
   ],
   imports: [
@@ -14,7 +17,7 @@ import { AppComponent } from './app.component';
     FormsModule,
     HttpModule
   ],
-  providers: [],
+  providers: [blockchain],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
