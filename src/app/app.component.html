@@ -1,4 +1,4 @@
-<div *ngFor="let block of blocks">
+<div *ngFor="let block of blocks  | async ">
   <block  [block]="block"></block>
   <hr>
 </div>

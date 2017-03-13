@@ -1,6 +1,12 @@
 import { Component } from '@angular/core';
-import { blockchain } from "./shared/services/blockchain";
+import { blockchainService } from "./shared/services/blockchain";
 import { Block } from "./shared/objects/block";
+import { Store } from "@ngrx/store";
+import { AppState } from "./store/app.state";
+import { addBlock } from "./actions/blockchain.actions";
+import { Observable } from "rxjs/Rx";
+
+
 
 @Component({
   selector: 'app-root',
@@ -9,18 +15,21 @@ import { Block } from "./shared/objects/block";
 })
 export class AppComponent {
   blockData:string;
-  blocks:Block[] = [];
+  blocks: Observable<Block[]>;
+  lastblock:Block;
 
-  constructor(public blockchain:blockchain){
-      let genesisBlock =  blockchain.getGenesisBlock();
-      this.blocks.push(genesisBlock);
+  constructor(public blockchainSrv:blockchainService,private store: Store<AppState>){
+      this.blocks = store.select("blockchain") as Observable<Block[]>;
+      this.blocks.subscribe((blockchain:Block[]) => {
+          this.lastblock = blockchain[blockchain.length - 1];
+      });
+      let genesisBlock =  blockchainSrv.getGenesisBlock();
+      this.store.dispatch(addBlock(genesisBlock));
   }
 
   generateNextBlock(){
-    let prevBlock:Block = this.blocks[this.blocks.length -1];
-    let nextBlock:Block = new Block(0,"",0,this.blockData,"");
+    let newBlock = this.blockchainSrv.generateNextBlock(this.lastblock.hash,this.blockData);
     this.blockData = '';
-    let newBlock = this.blockchain.generateNextBlock(prevBlock,nextBlock);
-    this.blocks.push(newBlock);
+    this.store.dispatch(addBlock(newBlock));
   }
 }
