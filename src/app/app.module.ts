@@ -8,6 +8,8 @@ import { AppComponent } from './app.component';
 import { blockchainService } from "./shared/services/blockchain";
 import { BlockComponent } from "./shared/components/block/block.component";
 import { blockchainReducer } from "./reducers/blockchain.reducer";
+import { webrtcService } from "./shared/services/webrtc";
+import { LoggerService } from "./shared/services/logger";
 
 @NgModule({
   declarations: [
@@ -20,7 +22,7 @@ import { blockchainReducer } from "./reducers/blockchain.reducer";
     HttpModule ,
     StoreModule.provideStore( { blockchain : blockchainReducer} , [])
   ],
-  providers: [blockchainService],
+  providers: [blockchainService , webrtcService , LoggerService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
