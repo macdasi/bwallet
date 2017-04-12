@@ -33,7 +33,7 @@ export class AppComponent implements  OnInit {
 
     ngOnInit() {
         this.signal.getMessages().subscribe((data : any ) => {
-            data.ids || data.ids.forEach((peerId) => {
+            data.ids && data.ids.forEach((peerId) => {
                 if(peerId != this.myPeerId){
                     this.webrtc.connect(peerId);
                 }
