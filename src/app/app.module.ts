@@ -10,6 +10,10 @@ import { BlockComponent } from "./shared/components/block/block.component";
 import { blockchainReducer } from "./reducers/blockchain.reducer";
 import { webrtcService } from "./shared/services/webrtc";
 import { LoggerService } from "./shared/services/logger";
+import { RTCDataChannelService } from "./shared/services/RTCdataChannelService";
+import { peerService } from "./shared/services/peerService";
+import { peerReducer } from "./reducers/peer.reducer";
+import { SignalService } from "./shared/services/signalService";
 
 @NgModule({
   declarations: [
@@ -20,9 +24,9 @@ import { LoggerService } from "./shared/services/logger";
     BrowserModule,
     FormsModule,
     HttpModule ,
-    StoreModule.provideStore( { blockchain : blockchainReducer} , [])
+    StoreModule.provideStore( { blockchain : blockchainReducer, peerId : peerReducer} , { blockchain : [] , peerId : ''  })
   ],
-  providers: [blockchainService , webrtcService , LoggerService],
+  providers: [blockchainService , SignalService , peerService , webrtcService , LoggerService , RTCDataChannelService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

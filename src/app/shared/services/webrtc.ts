@@ -18,7 +18,8 @@ export class webrtcService {
     constructor(private logger:LoggerService){}
 
     createConnection():Promise<string> {
-        let servers = null;
+        var peerConnectionConfig = {'iceServers': [{'url': 'stun:stun.services.mozilla.com'}, {'url': 'stun:stun.l.google.com:19302'}]};
+
         let pcConstraint = null;
         let dataConstraint = null;
         this.logger.trace('Using SCTP based data channels');
@@ -28,7 +29,7 @@ export class webrtcService {
         // Add localConnection to global scope to make it visible
         // from the browser console.
         this.localConnection =
-            new RTCPeerConnection(servers, pcConstraint);
+            new RTCPeerConnection(peerConnectionConfig, pcConstraint);
         this.logger.trace('Created local peer connection object localConnection');
 
         this.sendChannel = this.localConnection.createDataChannel('sendDataChannel',
@@ -46,7 +47,7 @@ export class webrtcService {
 
 
         this.remoteConnection =
-            new RTCPeerConnection(servers, pcConstraint);
+            new RTCPeerConnection(peerConnectionConfig, pcConstraint);
         this.logger.trace('Created remote peer connection object remoteConnection');
 
         this.remoteConnection.onicecandidate =  (e)=> {
@@ -55,7 +56,7 @@ export class webrtcService {
         this.remoteConnection.ondatachannel = this.receiveChannelCallback.bind(this);
 
         this.localConnection.createOffer().then(
-            this.gotDescription1.bind(this),
+            this.gotLocalDescription.bind(this),
             this.onCreateSessionDescriptionError.bind(this)
         );
 
@@ -106,21 +107,21 @@ export class webrtcService {
         this.logger.trace('Closed peer connections');
     }
 
-    
 
-    gotDescription1(desc) {
+
+    gotLocalDescription(desc) {
         this.localConnection.setLocalDescription(desc);
         this.logger.trace('Offer from localConnection \n' + desc.sdp);
         this.remoteConnection.setRemoteDescription(desc);
         this.remoteConnection.createAnswer().then(
-            this.gotDescription2.bind(this),
+            this.gotRemoteDescription.bind(this),
             this.onCreateSessionDescriptionError.bind(this)
         );
     }
 
-    
 
-    gotDescription2(desc) {
+
+    gotRemoteDescription(desc) {
         this.remoteConnection.setLocalDescription(desc);
         this.logger.trace('Answer from remoteConnection \n' + desc.sdp);
         this.localConnection.setRemoteDescription(desc);

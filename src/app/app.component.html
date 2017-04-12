@@ -1,8 +1,8 @@
-<div *ngFor="let block of blocks  | async ">
+<div *ngFor="let block of blocks$  | async ">
   <block  [block]="block"></block>
   <hr>
 </div>
-
 <input type="text" placeholder="Block data..." [(ngModel)]="blockData">
-<button (click)="generateNextBlock()">Add block</button>
-<button (click)="openSend()">open & send</button>
+<button (click)="generateNextBlock()">New block</button>
+<label>{{peerId$ | async}}</label>
+<button (click)="send()">open</button>

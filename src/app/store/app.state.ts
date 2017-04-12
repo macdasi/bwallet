@@ -5,4 +5,6 @@ import { Block } from "../shared/objects/block";
  */
 export interface AppState {
     blockchain: Block[];
+    peerId:string;
+    remotePeerId:string[];
 }
