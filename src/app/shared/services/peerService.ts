@@ -23,18 +23,16 @@ export class peerService {
 
     connect(remoteId){
         peer.on('connection', (conn)=> {
+            conn.on('open', ()=>{
+                console.log('open connection');
+            });
+            conn.on('data', (data) => {
+                console.log(data);
+            });
+            this.store.dispatch(addRemoteConnection(conn));
         });
 
         let conn = peer.connect(remoteId);
-        conn.on('open', ()=>{
-            console.log('open connection');
-        });
-        conn.on('data', (data) => {
-            console.log(data);
-        });
-        this.store.dispatch(addRemoteConnection(conn));
-
-
     }
 
     send(conn:dataConnection[]){
