@@ -24,7 +24,11 @@ import { SignalService } from "./shared/services/signalService";
     BrowserModule,
     FormsModule,
     HttpModule ,
-    StoreModule.provideStore( { blockchain : blockchainReducer, peerId : peerReducer} , { blockchain : [] , peerId : ''  })
+    StoreModule.provideStore(
+        {
+          blockchain : blockchainReducer, peerData : peerReducer
+        } ,
+        { blockchain : [] , peerData : { peerId : '' , remoteConnections : [] }  })
   ],
   providers: [blockchainService , SignalService , peerService , webrtcService , LoggerService , RTCDataChannelService],
   bootstrap: [AppComponent]

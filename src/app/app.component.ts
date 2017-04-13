@@ -7,6 +7,8 @@ import { addBlock } from "./actions/blockchain.actions";
 import { Observable } from "rxjs/Rx";
 import { peerService } from "./shared/services/peerService";
 import { SignalService } from "./shared/services/signalService";
+import { peerData } from "./shared/objects/peerData";
+import { dataConnection } from "./shared/objects/dataConnection";
 
 
 
@@ -20,9 +22,10 @@ export class AppComponent implements  OnInit {
     blockData:string;
     myPeerId:string;
     blocks$:Observable<Block[]>;
-    peerId$: Observable<string>;
+    peerId$: Observable<peerData>;
+    remoteConnections : dataConnection[];
+
     lastblock:Block;
-    remotePeerId:string;
 
     constructor(public blockchainSrv:blockchainService,
                 private store:Store<AppState>,
@@ -43,12 +46,13 @@ export class AppComponent implements  OnInit {
 
 
 
-        this.peerId$ = this.store.select("peerId") as Observable<string> ;
-        this.peerId$.subscribe((peerId:string)=>{
-            if(peerId != ''){
-                this.myPeerId = peerId;
-                this.signal.sendMessage(peerId);
+        this.peerId$ = this.store.select("peerData") as Observable<peerData> ;
+        this.peerId$.subscribe((data:peerData)=>{
+            if(data.peerId != '' && data.peerId != this.myPeerId){
+                this.myPeerId = data.peerId;
+                this.signal.sendMessage(data.peerId);
             }
+            this.remoteConnections = data.remoteConnections;
         });
 
         // this.peerId$.subscribe();
@@ -72,6 +76,6 @@ export class AppComponent implements  OnInit {
 
 
     send() {
-        this.webrtc.send();
+        this.webrtc.send(this.remoteConnections);
     }
 }

@@ -23,11 +23,18 @@ io.on('connection', (socket) => {
         io.emit('message', {type:'peer-connection', ids : connections});
     }
     socket.on('disconnect', function(){
-        console.log('user disconnected');
+        var i = connections.indexOf(socket.peerId);
+        if( i > -1){
+            connections.splice(i, 1);
+        }
+        console.log('user disconnect');
+        console.log(connections);
+        io.emit('message', {type:'peer-connection', ids : connections});
     });
 
     socket.on('add-message', (message) => {
         if(connections.indexOf(message) == -1 && message != ''){
+            socket.peerId = message;
             connections.push(message);
             io.emit('message', {type:'peer-connection', ids : connections});
         }

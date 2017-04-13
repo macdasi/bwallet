@@ -4,5 +4,14 @@
 </div>
 <input type="text" placeholder="Block data..." [(ngModel)]="blockData">
 <button (click)="generateNextBlock()">New block</button>
-<label>{{peerId$ | async}}</label>
-<button (click)="send()">open</button>
+<button (click)="send()">send hi</button>
+
+
+<hr>
+<b>my peer</b>
+<div>{{ (peerId$ | async).peerId }}</div>
+
+
+<hr>
+<b>remotes peers</b>
+<div *ngFor="let item of remoteConnections">{{item.peer}}</div>
