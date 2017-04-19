@@ -24,20 +24,24 @@ export class peerService {
     connect(remoteId){
         peer.on('connection', (conn)=> {
             conn.on('open', ()=>{
-                console.log('open connection');
+                console.log(`Open connection to peer ${conn.peer}`);
             });
-            conn.on('data', (data) => {
-                console.log(data);
+
+            conn.on('error', function (error) {
+                console.log('Peer:\t Data channel connection error', error);
             });
+
+
             this.store.dispatch(addRemoteConnection(conn));
         });
 
-        let conn = peer.connect(remoteId);
+        let conn = peer.connect(remoteId, {reliable: true});
+        conn.on('data', (data) => {
+            console.log(data);
+        });
     }
 
-    send(conn:dataConnection[]){
-        conn.forEach((item)=>{
-            item.send(`Hi from ${peer.id}!`)
-        });
+    send(conn:dataConnection){
+        conn.send(`Hi from ${peer.id}!`)
     }
 }

@@ -76,6 +76,8 @@ export class AppComponent implements  OnInit {
 
 
     send() {
-        this.webrtc.send(this.remoteConnections);
+        this.remoteConnections.filter( conn => conn.open ).forEach((conn:dataConnection) => {
+            this.webrtc.send(conn);
+        });
     }
 }

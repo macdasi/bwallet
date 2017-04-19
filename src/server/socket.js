@@ -38,7 +38,6 @@ io.on('connection', (socket) => {
             connections.push(message);
             io.emit('message', {type:'peer-connection', ids : connections});
         }
-
     });
 });
 
