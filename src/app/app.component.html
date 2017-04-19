@@ -9,9 +9,9 @@
 
 <hr>
 <b>my peer</b>
-<div>{{ (peerId$ | async).peerId }}</div>
+<div>{{ peerId$ | async }}</div>
 
 
 <hr>
 <b>remotes peers</b>
-<div *ngFor="let item of remoteConnections">{{item.peer}}</div>
+<div *ngFor="let item of remoteConnections$ | async ">{{item.peer}}</div>

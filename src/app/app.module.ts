@@ -13,6 +13,7 @@ import { PeerService } from "./shared/services/peer.service";
 import { peerReducer } from "./reducers/peer.reducer";
 import { SignalService } from "./shared/services/signal.service";
 import { MessageService } from "./shared/services/message.service";
+import { AppState } from "./store/app.state";
 
 @NgModule({
   declarations: [
@@ -27,7 +28,7 @@ import { MessageService } from "./shared/services/message.service";
         {
           blockchain : blockchainReducer, peerData : peerReducer
         } ,
-        { blockchain : [] , peerData : { peerId : '' , remoteConnections : [] }  })
+        { blockchain : [] , peerData : { peerId : '' , remoteConnections : [] }  } as AppState)
   ],
   providers: [
       blockchainService ,

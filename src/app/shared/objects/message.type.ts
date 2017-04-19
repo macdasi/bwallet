@@ -3,6 +3,6 @@
  */
 
 export class MessageType{
-    public static TEXT:string  = '0';
-    public static BLOCK:string  = '1';
+    public static TEXT:number  = 0;
+    public static BLOCK:number  = 1;
 };

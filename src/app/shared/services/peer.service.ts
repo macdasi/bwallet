@@ -51,6 +51,6 @@ export class PeerService {
     }
 
     send(conn:dataConnection , data ){
-        conn.send(data)
+        conn.send(JSON.stringify( data ));
     }
 }

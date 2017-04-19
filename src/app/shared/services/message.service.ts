@@ -10,9 +10,14 @@ import { dataConnection } from "../objects/dataConnection";
 import { PeerService } from "./peer.service";
 import { Message } from "../objects/message";
 import { MessageType } from "../objects/message.type";
+import { Injectable } from "@angular/core";
+import { addBlock } from "../../actions/blockchain.actions";
+import { Block } from "../objects/block";
 
+@Injectable()
 export class MessageService {
-    peerId$  : Observable<peerData>;
+    peerId$  : Observable<string>;
+    remoteConnections$  : Observable<dataConnection[]>;
     myPeerId:string;
     remoteConnections : dataConnection[];
 
@@ -30,19 +35,34 @@ export class MessageService {
     }
 
     init(){
-        this.peerId$ = this.store.select("peerData") as Observable<peerData> ;
-        this.peerId$.subscribe((data:peerData)=>{
-            if(data.peerId != '' && data.peerId != this.myPeerId){
-                this.myPeerId = data.peerId;
-                this.signal.sendMessage(data.peerId);
+        this.peerId$ = this.store.select( s => s.peerData.peerId ) as Observable<string> ;
+
+        this.peerId$.subscribe((data:string)=>{
+            if(data != '' && data != this.myPeerId){
+                this.myPeerId = data;
+                this.signal.sendMessage(data);
             }
-            this.remoteConnections = data.remoteConnections;
         });
 
-        this.webrtc.data$.subscribe((data : any ) => {
-            switch((data.type as MessageType)) {
+        this.remoteConnections$ = this.store.select( s =>  s.peerData.remoteConnections ) as Observable<dataConnection[]> ;
+
+        this.remoteConnections$.subscribe((data:dataConnection[])=>{
+            this.remoteConnections = data;
+        });
+
+
+        this.webrtc.data$.subscribe((message : Message ) => {
+            if( typeof(message) === 'string'){
+                message = JSON.parse(message as string) as Message;
+            }
+            switch(message.type) {
                 case MessageType.TEXT: {
-                    console.log(data)
+                    console.log(message);
+                    break;
+                }
+                case MessageType.BLOCK: {
+                    this.store.dispatch(addBlock(message.data as Block ));
+                    break;
                 }
                 default: {
                     //statements;

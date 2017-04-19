@@ -15,13 +15,13 @@ import { Message } from "./shared/objects/message";
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.css'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    styleUrls: ['./app.component.css']
 })
 export class AppComponent implements  OnInit {
     blockData:string;
     blocks$:Observable<Block[]>;
-    remoteConnections : dataConnection[];
+    peerId$  : Observable<string>;
+    remoteConnections$ : Observable<dataConnection[]> ;
 
     lastblock:Block;
 
@@ -38,6 +38,13 @@ export class AppComponent implements  OnInit {
             this.lastblock = blockchain[blockchain.length - 1];
         });
 
+        this.peerId$ = this.store.select( s => s.peerData.peerId ) as Observable<string> ;
+        /*this.peerId$.subscribe((data) => {
+            console.log(data);
+        });*/
+
+        this.remoteConnections$ = this.store.select( s =>  s.peerData.remoteConnections ) as Observable<dataConnection[]> ;
+
         let genesisBlock = this.blockchainSrv.getGenesisBlock();
         this.store.dispatch(addBlock(genesisBlock));
     }
@@ -46,6 +53,9 @@ export class AppComponent implements  OnInit {
         let time = new Date().valueOf();
         let newBlock = this.blockchainSrv.generateNextBlock(this.lastblock.hash, this.blockData, time);
         this.blockData = '';
+
+        this.message.send({ data : newBlock , type : MessageType.BLOCK } as Message);
+
         this.store.dispatch(addBlock(newBlock));
     }
 
