@@ -1,7 +1,6 @@
 /**
  * Created by hadar.m on 12/04/2017.
  */
-import { Subject } from 'rxjs/Subject';
 import { Observable } from 'rxjs/Observable';
 import * as io from 'socket.io-client';
 
@@ -10,11 +9,12 @@ export class SignalService {
     private socket;
 
     sendMessage(message){
-        this.socket.emit('add-message', message);
+        this.socket.emit('message', message);
     }
 
+
     getMessages() {
-        let observable = new Observable(observer => {
+        return new Observable(observer => {
             this.socket = io(this.url);
             this.socket.on('message', (data) => {
                 observer.next(data);
@@ -22,7 +22,6 @@ export class SignalService {
             return () => {
                 this.socket.disconnect();
             };
-        })
-        return observable;
+        });
     }
 }

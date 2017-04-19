@@ -5,15 +5,14 @@ import { HttpModule } from '@angular/http';
 import { StoreModule } from '@ngrx/store';
 
 import { AppComponent } from './app.component';
-import { blockchainService } from "./shared/services/blockchain";
+import { blockchainService } from "./shared/services/blockchain.service";
 import { BlockComponent } from "./shared/components/block/block.component";
 import { blockchainReducer } from "./reducers/blockchain.reducer";
-import { webrtcService } from "./shared/services/webrtc";
-import { LoggerService } from "./shared/services/logger";
-import { RTCDataChannelService } from "./shared/services/RTCdataChannelService";
-import { peerService } from "./shared/services/peerService";
+import { LoggerService } from "./shared/services/logger.service";
+import { PeerService } from "./shared/services/peer.service";
 import { peerReducer } from "./reducers/peer.reducer";
-import { SignalService } from "./shared/services/signalService";
+import { SignalService } from "./shared/services/signal.service";
+import { MessageService } from "./shared/services/message.service";
 
 @NgModule({
   declarations: [
@@ -30,7 +29,13 @@ import { SignalService } from "./shared/services/signalService";
         } ,
         { blockchain : [] , peerData : { peerId : '' , remoteConnections : [] }  })
   ],
-  providers: [blockchainService , SignalService , peerService , webrtcService , LoggerService , RTCDataChannelService],
+  providers: [
+      blockchainService ,
+      SignalService ,
+      PeerService ,
+      LoggerService ,
+      MessageService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

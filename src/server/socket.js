@@ -20,8 +20,9 @@ let connections = [];
 io.on('connection', (socket) => {
     console.log('user connected');
     if(connections.length > 0){
-        io.emit('message', {type:'peer-connection', ids : connections});
+        io.emit('message', {type:'nodes', ids : connections});
     }
+
     socket.on('disconnect', function(){
         var i = connections.indexOf(socket.peerId);
         if( i > -1){
@@ -29,14 +30,15 @@ io.on('connection', (socket) => {
         }
         console.log('user disconnect');
         console.log(connections);
-        io.emit('message', {type:'peer-connection', ids : connections});
+        io.emit('message', {type:'nodes', ids : connections});
     });
 
-    socket.on('add-message', (message) => {
+    socket.on('message', (message) => {
         if(connections.indexOf(message) == -1 && message != ''){
             socket.peerId = message;
             connections.push(message);
-            io.emit('message', {type:'peer-connection', ids : connections});
+            console.log('user '+ message +' disconnect');
+            io.emit('message', {type:'nodes', ids : connections});
         }
     });
 });

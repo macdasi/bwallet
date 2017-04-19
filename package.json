@@ -4,7 +4,7 @@
   "license": "MIT",
   "angular-cli": {},
   "scripts": {
-    "start": "ng serve",
+    "start": "ng serve --port 1234 --poll=2000",
     "lint": "tslint \"src/**/*.ts\""
   },
   "author": "Haddar Macdasi",

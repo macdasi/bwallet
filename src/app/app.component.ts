@@ -1,14 +1,14 @@
 import { Component, OnInit , ChangeDetectionStrategy  } from '@angular/core';
-import { blockchainService } from "./shared/services/blockchain";
+import { blockchainService } from "./shared/services/blockchain.service";
 import { Block } from "./shared/objects/block";
 import { Store } from "@ngrx/store";
 import { AppState } from "./store/app.state";
 import { addBlock } from "./actions/blockchain.actions";
 import { Observable } from "rxjs/Rx";
-import { peerService } from "./shared/services/peerService";
-import { SignalService } from "./shared/services/signalService";
-import { peerData } from "./shared/objects/peerData";
 import { dataConnection } from "./shared/objects/dataConnection";
+import { MessageService } from "./shared/services/message.service";
+import { MessageType } from "./shared/objects/message.type";
+import { Message } from "./shared/objects/message";
 
 
 
@@ -20,43 +20,18 @@ import { dataConnection } from "./shared/objects/dataConnection";
 })
 export class AppComponent implements  OnInit {
     blockData:string;
-    myPeerId:string;
     blocks$:Observable<Block[]>;
-    peerId$: Observable<peerData>;
     remoteConnections : dataConnection[];
 
     lastblock:Block;
 
-    constructor(public blockchainSrv:blockchainService,
-                private store:Store<AppState>,
-                private signal: SignalService,
-                private webrtc:peerService) {
+    constructor(public  message:MessageService ,
+                public  blockchainSrv:blockchainService ,
+                private store:Store<AppState> ) {
 
     }
 
     ngOnInit() {
-        this.signal.getMessages().subscribe((data : any ) => {
-            data.ids && data.ids.forEach((peerId) => {
-                if(peerId != this.myPeerId){
-                    this.webrtc.connect(peerId);
-                }
-            });
-            console.log(data);
-        });
-
-
-
-        this.peerId$ = this.store.select("peerData") as Observable<peerData> ;
-        this.peerId$.subscribe((data:peerData)=>{
-            if(data.peerId != '' && data.peerId != this.myPeerId){
-                this.myPeerId = data.peerId;
-                this.signal.sendMessage(data.peerId);
-            }
-            this.remoteConnections = data.remoteConnections;
-        });
-
-        // this.peerId$.subscribe();
-
         this.blocks$ = this.store.select("blockchain") as Observable<Block[]>;
 
         this.blocks$.subscribe((blockchain:Block[]) => {
@@ -76,8 +51,6 @@ export class AppComponent implements  OnInit {
 
 
     send() {
-        this.remoteConnections.filter( conn => conn.open ).forEach((conn:dataConnection) => {
-            this.webrtc.send(conn);
-        });
+        this.message.send({ data : 'hello' , type : MessageType.TEXT } as Message);
     }
 }
