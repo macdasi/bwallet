@@ -15,6 +15,8 @@ import { SignalService } from "./shared/services/signal.service";
 import { MessageService } from "./shared/services/message.service";
 import { AppState } from "./store/app.state";
 
+let defaultState:AppState = { blockchain : [] , peerData : { peerId : '' , remoteConnections : [] }  } as AppState;
+
 @NgModule({
   declarations: [
     BlockComponent,
@@ -28,7 +30,7 @@ import { AppState } from "./store/app.state";
         {
           blockchain : blockchainReducer, peerData : peerReducer
         } ,
-        { blockchain : [] , peerData : { peerId : '' , remoteConnections : [] }  } as AppState)
+        defaultState)
   ],
   providers: [
       blockchainService ,

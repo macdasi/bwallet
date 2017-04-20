@@ -23,9 +23,28 @@ export class PeerService {
         this.dataSource = new Subject<any>();
         this.data$ = this.dataSource.asObservable();
 
+
         peer.on('open',()=>{
             this.store.dispatch(setPeer(peer.id));
         });
+
+        peer.on('discovery',(peers)=>{
+            console.log(peers);
+        });
+
+        peer.on('connection', (conn)=> {
+            conn.on('open', ()=>{
+                console.log(`Open connection to peer ${conn.peer}`);
+            });
+
+            conn.on('error', function (error) {
+                console.log('Peer:\t Data channel connection error', error);
+            });
+
+
+            this.store.dispatch(addRemoteConnection(conn));
+        });
+
     }
 
     connect(remoteId){
@@ -42,12 +61,12 @@ export class PeerService {
             this.store.dispatch(addRemoteConnection(conn));
         });
 
-        let conn = peer.connect(remoteId, {reliable: true});
-        conn.on('data', (data) => {
-            if(this.dataSource && this.dataSource.next){
-                this.dataSource.next(data);
-            }
-        });
+        //let conn = peer.connect(remoteId, {reliable: true});
+        //conn.on('data', (data) => {
+        //    if(this.dataSource && this.dataSource.next){
+        //        this.dataSource.next(data);
+        //    }
+        //});
     }
 
     send(conn:dataConnection , data ){

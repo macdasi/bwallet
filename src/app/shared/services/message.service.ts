@@ -5,7 +5,6 @@ import { Observable } from 'rxjs/Observable';
 import { Store } from "@ngrx/store";
 import { SignalService } from "./signal.service";
 import { AppState } from "../../store/app.state";
-import { peerData } from "../objects/peerData";
 import { dataConnection } from "../objects/dataConnection";
 import { PeerService } from "./peer.service";
 import { Message } from "../objects/message";
@@ -13,6 +12,7 @@ import { MessageType } from "../objects/message.type";
 import { Injectable } from "@angular/core";
 import { addBlock } from "../../actions/blockchain.actions";
 import { Block } from "../objects/block";
+//import {  NgZone } from '@angular/core';
 
 @Injectable()
 export class MessageService {
@@ -23,7 +23,9 @@ export class MessageService {
 
     constructor(private signal: SignalService ,
                 private store:Store<AppState>,
-                private webrtc: PeerService ){
+                private webrtc: PeerService
+                //public zone: NgZone
+    ){
 
         this.init();
     }
@@ -61,7 +63,9 @@ export class MessageService {
                     break;
                 }
                 case MessageType.BLOCK: {
-                    this.store.dispatch(addBlock(message.data as Block ));
+                    //this.zone.run(() => {
+                        this.store.dispatch(addBlock(message.data as Block ));
+                    //});
                     break;
                 }
                 default: {
@@ -76,9 +80,15 @@ export class MessageService {
                 case 'nodes': {
                     data.ids && data.ids.forEach((peerId) => {
                         if(peerId != this.myPeerId){
-                            this.webrtc.connect(peerId);
+                           // this.webrtc.connect(peerId);
                         }
                     });
+                    break;
+                }
+                case 'connected': {
+                    if(this.myPeerId){
+                        this.signal.sendMessage(this.myPeerId);
+                    }
                     break;
                 }
                 default: {

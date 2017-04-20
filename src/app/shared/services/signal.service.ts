@@ -9,7 +9,7 @@ export class SignalService {
     private socket;
 
     sendMessage(message){
-        this.socket.emit('message', message);
+        //this.socket.emit('message', message);
     }
 
 
@@ -17,7 +17,7 @@ export class SignalService {
         return new Observable(observer => {
             this.socket = io(this.url);
             this.socket.on('message', (data) => {
-                observer.next(data);
+                //observer.next(data);
             });
             return () => {
                 this.socket.disconnect();

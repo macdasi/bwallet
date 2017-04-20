@@ -18,30 +18,39 @@ let io = require('socket.io')(http);
 let connections = [];
 
 io.on('connection', (socket) => {
-    console.log('user connected');
+    socket.emit('message', {type:'connected'});
+    socket.emit('message', {type:'nodes', ids : connections});
+
+
     if(connections.length > 0){
         io.emit('message', {type:'nodes', ids : connections});
+        console.log(connections);
     }
 
     socket.on('disconnect', function(){
         var i = connections.indexOf(socket.peerId);
+
         if( i > -1){
+            var id = connections[i];
             connections.splice(i, 1);
+            console.log('user '+ id +' disconnected');
+            io.emit('message', {type:'nodes', ids : connections});
+            console.log(connections);
         }
-        console.log('user disconnect');
-        console.log(connections);
-        io.emit('message', {type:'nodes', ids : connections});
+
     });
 
     socket.on('message', (message) => {
-        if(connections.indexOf(message) == -1 && message != ''){
+        if(connections.indexOf(message) == -1 && message){
             socket.peerId = message;
             connections.push(message);
-            console.log('user '+ message +' disconnect');
+            console.log('user '+ message +' connected');
             io.emit('message', {type:'nodes', ids : connections});
+            console.log(connections);
         }
     });
 });
+
 
 http.listen(5000, () => {
     console.log('started on port 5000');

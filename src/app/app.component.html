@@ -11,7 +11,6 @@
 <b>my peer</b>
 <div>{{ peerId$ | async }}</div>
 
-
 <hr>
 <b>remotes peers</b>
 <div *ngFor="let item of remoteConnections$ | async ">{{item.peer}}</div>

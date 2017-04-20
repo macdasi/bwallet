@@ -11,7 +11,6 @@ import { MessageType } from "./shared/objects/message.type";
 import { Message } from "./shared/objects/message";
 
 
-
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
@@ -32,10 +31,13 @@ export class AppComponent implements  OnInit {
     }
 
     ngOnInit() {
+
         this.blocks$ = this.store.select("blockchain") as Observable<Block[]>;
 
         this.blocks$.subscribe((blockchain:Block[]) => {
+
             this.lastblock = blockchain[blockchain.length - 1];
+            console.log(this.lastblock);
         });
 
         this.peerId$ = this.store.select( s => s.peerData.peerId ) as Observable<string> ;
