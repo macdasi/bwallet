@@ -25,10 +25,13 @@ app.use('/bwallet', peerServer);
 
 peerServer.on('connection', function(id) {
     var idx = connected.indexOf(id); // only add id if it's not in the list yet
-    if (idx === -1) {connected.push(id);}
-    //peerServer.emit('connection', { data : 'haddar'});
-    debugger;
-    console.log(peerServer._wss.clients);
+    if (idx === -1) {
+        connected.push(id);
+        /*peerServer._wss.clients.forEach((client) => {
+            client.send(JSON.stringify({ type: 'DISCOVERY' , payload : { id : id } }));
+        } );*/
+
+    }
     console.log(connected);
 });
 peerServer.on('disconnect', function (id) {

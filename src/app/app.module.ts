@@ -11,11 +11,10 @@ import { blockchainReducer } from "./reducers/blockchain.reducer";
 import { LoggerService } from "./shared/services/logger.service";
 import { PeerService } from "./shared/services/peer.service";
 import { peerReducer } from "./reducers/peer.reducer";
-import { SignalService } from "./shared/services/signal.service";
 import { MessageService } from "./shared/services/message.service";
-import { AppState } from "./store/app.state";
+// import { AppState } from "./store/app.state";
 
-let defaultState:AppState = { blockchain : [] , peerData : { peerId : '' , remoteConnections : [] }  } as AppState;
+// let defaultState:AppState = { blockchain : [] , peerData : { peerId : '' , remoteConnections : [] }  } as AppState;
 
 @NgModule({
   declarations: [
@@ -30,11 +29,10 @@ let defaultState:AppState = { blockchain : [] , peerData : { peerId : '' , remot
         {
           blockchain : blockchainReducer, peerData : peerReducer
         } ,
-        defaultState)
+        { blockchain : [] , peerData : { peerId : '' , remoteConnections : [] }  })
   ],
   providers: [
       blockchainService ,
-      SignalService ,
       PeerService ,
       LoggerService ,
       MessageService

@@ -3,7 +3,6 @@
  */
 import { Observable } from 'rxjs/Observable';
 import { Store } from "@ngrx/store";
-import { SignalService } from "./signal.service";
 import { AppState } from "../../store/app.state";
 import { dataConnection } from "../objects/dataConnection";
 import { PeerService } from "./peer.service";
@@ -12,7 +11,7 @@ import { MessageType } from "../objects/message.type";
 import { Injectable } from "@angular/core";
 import { addBlock } from "../../actions/blockchain.actions";
 import { Block } from "../objects/block";
-//import {  NgZone } from '@angular/core';
+import {  NgZone } from '@angular/core';
 
 @Injectable()
 export class MessageService {
@@ -21,12 +20,9 @@ export class MessageService {
     myPeerId:string;
     remoteConnections : dataConnection[];
 
-    constructor(private signal: SignalService ,
-                private store:Store<AppState>,
+    constructor(private store:Store<AppState>,
                 private webrtc: PeerService
-                //public zone: NgZone
     ){
-
         this.init();
     }
 
@@ -42,7 +38,6 @@ export class MessageService {
         this.peerId$.subscribe((data:string)=>{
             if(data != '' && data != this.myPeerId){
                 this.myPeerId = data;
-                this.signal.sendMessage(data);
             }
         });
 
@@ -63,9 +58,7 @@ export class MessageService {
                     break;
                 }
                 case MessageType.BLOCK: {
-                    //this.zone.run(() => {
-                        this.store.dispatch(addBlock(message.data as Block ));
-                    //});
+                    this.store.dispatch(addBlock(message.data as Block ));
                     break;
                 }
                 default: {
@@ -73,30 +66,6 @@ export class MessageService {
                     break;
                 }
             }
-        });
-
-        this.signal.getMessages().subscribe((data : any ) => {
-            switch(data.type) {
-                case 'nodes': {
-                    data.ids && data.ids.forEach((peerId) => {
-                        if(peerId != this.myPeerId){
-                           // this.webrtc.connect(peerId);
-                        }
-                    });
-                    break;
-                }
-                case 'connected': {
-                    if(this.myPeerId){
-                        this.signal.sendMessage(this.myPeerId);
-                    }
-                    break;
-                }
-                default: {
-                    //statements;
-                    break;
-                }
-            }
-
         });
     }
 

@@ -18,7 +18,8 @@
         "styles.css"
       ],
       "scripts": [
-        "../node_modules/crypto-js/crypto-js.js"
+        "../node_modules/crypto-js/crypto-js.js" ,
+        "app/peer.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {

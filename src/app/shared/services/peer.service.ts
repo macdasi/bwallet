@@ -12,10 +12,12 @@ import { Subject } from 'rxjs/Rx';
 /**
  * Created by hadar.m on 06/03/2017.
  */
-const peer:any = window['peer'];
+
 
 @Injectable()
 export class PeerService {
+    peer:any = window['peer'];
+
     public data$:Observable<any>;
     private dataSource:Subject<any>;
 
@@ -23,16 +25,18 @@ export class PeerService {
         this.dataSource = new Subject<any>();
         this.data$ = this.dataSource.asObservable();
 
-
-        peer.on('open',()=>{
-            this.store.dispatch(setPeer(peer.id));
+        this.peer.on('open',()=>{
+            this.store.dispatch(setPeer(this.peer.id));
         });
 
-        peer.on('discovery',(peers)=>{
-            console.log(peers);
+        this.peer.on('discovery',(peer)=>{
+            if(this.peer.id != peer ){
+                this.connect(peer);
+            }
+            console.log(peer);
         });
 
-        peer.on('connection', (conn)=> {
+        this.peer.on('connection', (conn)=> {
             conn.on('open', ()=>{
                 console.log(`Open connection to peer ${conn.peer}`);
             });
@@ -48,7 +52,7 @@ export class PeerService {
     }
 
     connect(remoteId){
-        peer.on('connection', (conn)=> {
+        this.peer.on('connection', (conn)=> {
             conn.on('open', ()=>{
                 console.log(`Open connection to peer ${conn.peer}`);
             });
@@ -61,12 +65,12 @@ export class PeerService {
             this.store.dispatch(addRemoteConnection(conn));
         });
 
-        //let conn = peer.connect(remoteId, {reliable: true});
-        //conn.on('data', (data) => {
-        //    if(this.dataSource && this.dataSource.next){
-        //        this.dataSource.next(data);
-        //    }
-        //});
+        let conn = this.peer.connect(remoteId, {reliable: true});
+        conn.on('data', (data) => {
+            if(this.dataSource && this.dataSource.next){
+                this.dataSource.next(data);
+           }
+        });
     }
 
     send(conn:dataConnection , data ){
